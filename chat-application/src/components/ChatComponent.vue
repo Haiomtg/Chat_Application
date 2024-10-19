@@ -5,19 +5,27 @@
     </header>
     <main class="flex-1 p-4 overflow-y-auto">
       <div class="bg-gray-100 p-4 rounded-lg shadow-md">
-        <div v-for="message in messages" :key="message.id" class="mb-2">
-          <span class="font-bold">{{ message.user }}:</span>
-          <span>{{ message.text }}</span>
+        <div v-for="message in messages" :key="message.id" class="mb-2 flex justify-end">
+          <div class="bg-blue-500 text-white p-2 rounded-lg max-w-xs mt-2">
+            <span class="font-bold">{{ message.user }}:</span>
+            <span>{{ message.text }}</span>
+          </div>
         </div>
       </div>
     </main>
-    <footer class="p-4">
+    <footer class="p-4 grid grid-cols-9">
       <input
         v-model="newMessage"
         @keyup.enter="sendMessage"
-        class="border rounded-lg p-2 w-full"
+        class="border rounded-lg p-2 col-span-8"
         placeholder="Type your message..."
       />
+      <button
+        @click="sendMessage"
+        class="border rounded-lg p-2 col-span-1 bg-blue-500 text-white"
+      >
+        Send
+      </button>
     </footer>
   </div>
 </template>
