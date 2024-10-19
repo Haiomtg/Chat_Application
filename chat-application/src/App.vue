@@ -1,17 +1,24 @@
 <template>
-  <div> <!-- Wrap everything in a single root element -->
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <nav>
+      <RouterLink to="/chat" class="text-blue-500">Go to Chat</RouterLink>
+    </nav>
+    <RouterView/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink } from 'vue-router';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    RouterLink
+  },
+  methods: {
+    goToAbout() {
+      this.$router.push('/chat')
+    }
   }
 }
 </script>
