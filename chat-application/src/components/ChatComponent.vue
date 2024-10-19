@@ -1,7 +1,11 @@
 <template>
   <div class="flex flex-col h-screen">
-    <header class="bg-blue-500 text-white p-4">
+    <header class="bg-blue-500 text-white p-4 flex justify-between items-center">
       <h1 class="text-xl">Chat Application</h1>
+      <div class="flex items-center">
+        <span class="text-white">{{ currentUser }}</span>
+        <button @click="logout" class="ml-4 bg-red-500 text-white p-2 rounded">Logout</button>
+      </div>
     </header>
     <main class="flex-1 p-4 overflow-y-auto">
       <div class="bg-gray-100 p-4 rounded-lg shadow-md">
@@ -31,6 +35,8 @@
 </template>
 
 <script>
+import { getCurrentUser, logout } from '../auth'; // Import the logout function
+
 export default {
   name: 'ChatComponent',
   data() {
@@ -38,6 +44,11 @@ export default {
       newMessage: '',
       messages: [],
     };
+  },
+  computed: {
+    currentUser() {
+      return getCurrentUser(); // Get the current username
+    }
   },
   methods: {
     sendMessage() {
@@ -50,6 +61,10 @@ export default {
         this.newMessage = '';
       }
     },
+    logout() {
+      logout(); // Call the logout function
+      this.$router.push('/login'); // Redirect to login after logout
+    }
   },
 };
 </script>

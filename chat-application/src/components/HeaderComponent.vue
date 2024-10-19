@@ -2,7 +2,11 @@
   <header class="bg-blue-500 text-white p-4">
     <nav class="flex justify-between">
       <RouterLink to="/" class="text-white">Home</RouterLink>
-      <RouterLink to="/chat" class="text-white">Chat</RouterLink>
+      <div class="flex space-x-4">
+        <RouterLink to="/login" class="text-white">Login</RouterLink>
+        <RouterLink to="/register" class="text-white">Register</RouterLink>
+        <RouterLink to="/chat" class="text-white">Chat</RouterLink>
+      </div>
     </nav>
   </header>
 </template>
@@ -25,4 +29,3 @@ nav {
   align-items: center;
 }
 </style>
-
