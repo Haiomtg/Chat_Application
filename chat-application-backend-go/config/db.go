@@ -2,26 +2,22 @@
 package config
 
 import (
-	"context"
+	"database/sql"
 	"log"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-var Client *mongo.Client
-
 func ConnectDB() {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/chat-app")
 	var err error
-	Client, err = mongo.Connect(context.TODO(), clientOptions)
+	DB, err = sql.Open("mysql", "username:password@tcp(127.0.0.1:3306)/chat_app")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = Client.Ping(context.TODO(), nil)
-	if err != nil {
+	if err = DB.Ping(); err != nil {
 		log.Fatal(err)
 	}
-	log.Println("MongoDB connected")
+
+	log.Println("MySQL connected")
 }

@@ -2,7 +2,6 @@
 package controllers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
@@ -10,7 +9,6 @@ import (
 	"chat-application-backend-go/models"
 
 	"github.com/dgrijalva/jwt-go"
-	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,8 +21,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	user.Password = string(hashedPassword)
 
-	collection := config.Client.Database("chat-app").Collection("users")
-	collection.InsertOne(context.TODO(), user)
+	_, err := config.DB.Exec("INSERT INTO users (username, password) VALUES (?, ?)", user.Username, user.Password)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode("Failed to register user")
+		return
+	}
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode("User registered")
@@ -35,10 +37,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user)
 
 	var foundUser models.User
-	collection := config.Client.Database("chat-app").Collection("users")
-	err := collection.FindOne(context.TODO(), bson.M{"username": user.Username}).Decode(&foundUser)
+	err := config.DB.QueryRow("SELECT id, username, password FROM users WHERE username = ?", user.Username).Scan(&foundUser.ID, &foundUser.Username, &foundUser.Password)
 
-	if err != nil || bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(user.Password)) != nil {
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode("Invalid credentials")
+		return
+	}
+
+	if bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(user.Password)) != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode("Invalid credentials")
 		return
