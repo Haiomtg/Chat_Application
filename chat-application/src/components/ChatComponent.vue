@@ -11,9 +11,16 @@
       <div class="bg-gray-100 p-4 rounded-lg shadow-md">
         <div v-for="message in messages" :key="message.id" class="mb-2 flex justify-end">
           <div class="bg-blue-500 text-white p-2 rounded-lg max-w-xs mt-2">
-            <span class="font-bold">{{ currentUser }} :</span>
-            <span>{{ message.text }}</span>
-            <button @click="deleteMessage(message.id)" class="text-red-500 ml-2">Delete</button>
+            <span v-if="!isEditing[message.id]">
+              <span class="font-bold">{{ currentUser }} :</span>
+              <span>{{ message.text }}</span>
+              <button @click="editMessage(message.id, message.text)" class="text-yellow-500 ml-2">Edit</button>
+              <button @click="deleteMessage(message.id)" class="text-red-500 ml-2">Delete</button>
+            </span>
+            <div v-else>
+              <input v-model="editedMessage[message.id]" :label="message.text" class="border text-black rounded-lg p-1" />
+              <button @click="updateMessage(message.id, editedMessage[message.id])" class="text-green-500 ml-2">Done</button>
+            </div>
           </div>
         </div>
       </div>
@@ -37,7 +44,7 @@
 
 <script>
 import { logout, getCurrentUser, getUserId } from '../auth';
-import { getMessages, sendMessage, deleteMessage } from '../service/message';
+import { getMessages, sendMessage, deleteMessage, editMessage } from '../service/message';
 
 export default {
   name: 'ChatComponent',
@@ -46,6 +53,8 @@ export default {
       newMessage: '',
       messages: [],
       currentUser: getCurrentUser(),
+      isEditing: {},
+      editedMessage: {},
     };
   },
   created() {
@@ -70,6 +79,16 @@ export default {
       const token = localStorage.getItem('token');
       await deleteMessage(token, messageId);
       this.fetchMessages(); // Refresh the message list after deletion
+    },
+    editMessage(messageId, text) {
+      this.isEditing[messageId] = true;
+      this.editedMessage[messageId] = text; // Store the current text for editing
+    },
+    async updateMessage(messageId, text) {
+      const token = localStorage.getItem('token');
+      await editMessage(token, messageId, text);
+      this.isEditing[messageId] = false; // Exit editing mode
+      this.fetchMessages(); // Refresh the message list after update
     },
     logout() {
       logout();

@@ -45,3 +45,16 @@ exports.deleteMessage = async (req, res) => {
     res.status(500).json({ message: 'Error deleting message' });
   }
 };
+
+exports.editMessage = async (req, res) => {
+  const { id, text } = req.body; // Get the message ID and new text from the request body
+  const db = getConnection();
+  
+  try {
+    await db.execute('UPDATE messages SET text = ? WHERE id = ?', [text, id]);
+    res.status(200).json({ message: 'Message updated' });
+  } catch (error) {
+    console.error('Error updating message:', error);
+    res.status(500).json({ message: 'Error updating message' });
+  }
+};

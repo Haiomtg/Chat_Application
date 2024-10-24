@@ -28,3 +28,7 @@ export const deleteMessage = async (token, messageId) => {
     },
   });
 };
+
+export const editMessage = async (token, messageId, text) => {
+  return await axios.put(`${API_URL}/chat/editMessage`, { id: messageId, text }, { headers: { Authorization: `Bearer ${token}` } });
+};
