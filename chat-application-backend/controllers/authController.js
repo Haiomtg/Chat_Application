@@ -24,10 +24,9 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { username, password } = req.body;
-
   try {
     const db = getConnection(); // Get the database connection
-    const [rows] = await db.execute('SELECT id, username, password FROM users WHERE username = ?', [username]);
+    const [rows] = await db.execute('SELECT * FROM users WHERE username = ?', [username]);
     const user = rows[0];
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -35,7 +34,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-    res.json({ token });
+    res.json({ token, username: user.username });
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).json({ message: 'Error logging in' });

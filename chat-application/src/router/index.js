@@ -1,10 +1,9 @@
 import { createRouter, createMemoryHistory } from 'vue-router';
-// import App from '../App.vue';
 import ChatComponent from '../components/ChatComponent.vue';
 import LoginComponent from '../components/LoginComponent.vue';
 import RegisterComponent from '../components/RegisterComponent.vue';
 import HomeComponent from '../components/HomeComponent.vue';
-import { checkAuth } from '../auth'; // Import the checkAuth function
+import { checkAuth } from '../auth';
 
 const routes = [
   {
@@ -17,11 +16,7 @@ const routes = [
     name: 'Chat',
     component: ChatComponent,
     beforeEnter: (to, from, next) => {
-      if (checkAuth()) {
-        next(); // Allow access to the chat component
-      } else {
-        next('/login'); // Redirect to login if not authenticated
-      }
+      checkAuth() ? next() : next('/login');
     },
   },
   {

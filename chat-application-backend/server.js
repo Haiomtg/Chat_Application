@@ -14,7 +14,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 
-const PORT =  5030;
+const PORT = 5030;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

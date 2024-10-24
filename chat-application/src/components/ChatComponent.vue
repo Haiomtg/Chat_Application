@@ -11,7 +11,7 @@
       <div class="bg-gray-100 p-4 rounded-lg shadow-md">
         <div v-for="message in messages" :key="message.id" class="mb-2 flex justify-end">
           <div class="bg-blue-500 text-white p-2 rounded-lg max-w-xs mt-2">
-            <span class="font-bold">{{ message.user }}:</span>
+            <span class="font-bold">{{ currentUser }} :</span>
             <span>{{ message.text }}</span>
           </div>
         </div>
@@ -35,7 +35,8 @@
 </template>
 
 <script>
-import { getCurrentUser, logout } from '../auth'; // Import the logout function
+import { logout, getCurrentUser } from '../auth';
+import { getMessages, sendMessage } from '../service/message';
 
 export default {
   name: 'ChatComponent',
@@ -43,27 +44,28 @@ export default {
     return {
       newMessage: '',
       messages: [],
+      currentUser: getCurrentUser(),
     };
   },
-  computed: {
-    currentUser() {
-      return getCurrentUser(); // Get the current username
-    }
+  created() {
+    this.fetchMessages();
   },
+  
   methods: {
-    sendMessage() {
-      if (this.newMessage.trim()) {
-        this.messages.push({
-          id: Date.now(),
-          user: 'You',
-          text: this.newMessage,
-        });
-        this.newMessage = '';
-      }
+    async fetchMessages() {
+      const token = localStorage.getItem('token');
+      const response = await getMessages(token);
+      this.messages = response.data; // Assuming response.data is an array of messages
+    },
+    async sendMessage() {
+      const token = localStorage.getItem('token');
+      await sendMessage(token, { text: this.newMessage });
+      this.newMessage = '';
+      this.fetchMessages();
     },
     logout() {
-      logout(); // Call the logout function
-      this.$router.push('/login'); // Redirect to login after logout
+      logout();
+      this.$router.push('/login');
     }
   },
 };
