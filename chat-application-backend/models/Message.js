@@ -1,20 +1,10 @@
 // models/Message.js
-const mongoose = require('mongoose');
+class Message {
+  constructor(user, text) {
+    this.user = user;
+    this.text = text;
+    this.timestamp = new Date();
+  }
+}
 
-const messageSchema = new mongoose.Schema({
-  user: {
-    type: String,
-    required: true,
-  },
-  text: {
-    type: String,
-    required: true,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-module.exports = mongoose.model('Message', messageSchema);
-
+module.exports = Message;

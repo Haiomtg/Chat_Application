@@ -1,18 +1,20 @@
 // config/db.js
-const mongoose = require('mongoose');
+const mysql = require('mysql2/promise');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/chat-app', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+    const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'your_username', // replace with your MySQL username
+      password: 'your_password', // replace with your MySQL password
+      database: 'chat_app', // replace with your database name
     });
-    console.log('MongoDB connected');
+    console.log('MySQL connected');
+    return connection;
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('MySQL connection error:', error);
     process.exit(1);
   }
 };
 
 module.exports = connectDB;
-
