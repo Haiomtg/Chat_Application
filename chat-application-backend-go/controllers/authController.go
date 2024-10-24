@@ -3,6 +3,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"chat-application-backend-go/config"
@@ -17,11 +18,14 @@ var jwtKey = []byte("your_jwt_secret")
 func Register(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	json.NewDecoder(r.Body).Decode(&user)
+	fmt.Println(user.Username)
+	fmt.Println(user.Password)
+	fmt.Println(user.Email)
 
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	user.Password = string(hashedPassword)
 
-	_, err := config.DB.Exec("INSERT INTO users (username, password) VALUES (?, ?)", user.Username, user.Password)
+	_, err := config.DB.Exec("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", user.Username, user.Password, user.Email)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode("Failed to register user")

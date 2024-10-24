@@ -10,7 +10,7 @@ import (
 
 func ConnectDB() {
 	var err error
-	DB, err = sql.Open("mysql", "username:password@tcp(127.0.0.1:3306)/chat_app")
+	DB, err = sql.Open("mysql", "root:root1234@tcp(localhost:3306)/chat_app")
 	if err != nil {
 		log.Fatal(err)
 	}
