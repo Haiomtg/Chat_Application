@@ -1,20 +1,31 @@
 // config/db.js
 const mysql = require('mysql2/promise');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+let connection;
 
 const connectDB = async () => {
   try {
-    const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'your_username', // replace with your MySQL username
-      password: 'your_password', // replace with your MySQL password
-      database: 'chat_app', // replace with your database name
+    connection = await mysql.createConnection({
+      host: process.env.MYSQL_HOST,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
     });
     console.log('MySQL connected');
-    return connection;
   } catch (error) {
     console.error('MySQL connection error:', error);
     process.exit(1);
   }
 };
 
-module.exports = connectDB;
+const getConnection = () => {
+  if (!connection) {
+    throw new Error('Database connection not established');
+  }
+  return connection;
+};
+
+module.exports = { connectDB, getConnection };

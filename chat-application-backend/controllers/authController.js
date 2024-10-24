@@ -2,7 +2,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('../config/db'); // Import the database connection
+const { getConnection } = require('../config/db'); // Import the getConnection function
 
 exports.register = async (req, res) => {
   const { username, password, email } = req.body;
@@ -10,6 +10,7 @@ exports.register = async (req, res) => {
   const user = new User(username, hashedPassword, email);
 
   try {
+    const db = getConnection(); // Get the database connection
     const [result] = await db.execute(
       'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
       [user.username, user.password, user.email]
@@ -25,6 +26,7 @@ exports.login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
+    const db = getConnection(); // Get the database connection
     const [rows] = await db.execute('SELECT id, username, password FROM users WHERE username = ?', [username]);
     const user = rows[0];
 
