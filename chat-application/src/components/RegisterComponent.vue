@@ -70,7 +70,7 @@ export default {
     async register() {
       try {
         const response = await register(this.registerData);
-        if (response) {
+        if (response.status === 201) {
           alert('User registered successfully!');
           this.$router.push("/login");
         } else {

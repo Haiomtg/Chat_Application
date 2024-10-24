@@ -13,6 +13,7 @@
           <div class="bg-blue-500 text-white p-2 rounded-lg max-w-xs mt-2">
             <span class="font-bold">{{ currentUser }} :</span>
             <span>{{ message.text }}</span>
+            <button @click="deleteMessage(message.id)" class="text-red-500 ml-2">Delete</button>
           </div>
         </div>
       </div>
@@ -35,8 +36,8 @@
 </template>
 
 <script>
-import { logout, getCurrentUser } from '../auth';
-import { getMessages, sendMessage } from '../service/message';
+import { logout, getCurrentUser, getUserId } from '../auth';
+import { getMessages, sendMessage, deleteMessage } from '../service/message';
 
 export default {
   name: 'ChatComponent',
@@ -54,7 +55,8 @@ export default {
   methods: {
     async fetchMessages() {
       const token = localStorage.getItem('token');
-      const response = await getMessages(token);
+      const userId = getUserId();
+      const response = await getMessages(token, userId);
       this.messages = response.data; // Assuming response.data is an array of messages
     },
     async sendMessage() {
@@ -62,6 +64,12 @@ export default {
       await sendMessage(token, { text: this.newMessage });
       this.newMessage = '';
       this.fetchMessages();
+    },
+    async deleteMessage(messageId) {
+      console.log(messageId);
+      const token = localStorage.getItem('token');
+      await deleteMessage(token, messageId);
+      this.fetchMessages(); // Refresh the message list after deletion
     },
     logout() {
       logout();
