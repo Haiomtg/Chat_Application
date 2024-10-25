@@ -18,7 +18,7 @@
               <button @click="deleteMessage(message.id)" class="text-red-500 ml-2">Delete</button>
             </span>
             <div v-else>
-              <input v-model="editedMessage[message.id]" :label="message.text" class="border text-black rounded-lg p-1" />
+              <input v-model="editedMessage[message.id]" class="border rounded-lg p-1" />
               <button @click="updateMessage(message.id, editedMessage[message.id])" class="text-green-500 ml-2">Done</button>
             </div>
           </div>
@@ -91,8 +91,9 @@ export default {
       this.fetchMessages(); // Refresh the message list after update
     },
     logout() {
-      logout();
-      this.$router.push('/login');
+      logout(); // Call the logout function to clear user data
+      localStorage.removeItem('token'); // Remove the token from local storage
+      this.$router.push('/login'); // Redirect to the login page
     }
   },
 };

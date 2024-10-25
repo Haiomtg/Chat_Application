@@ -34,6 +34,7 @@
         <button
           type="submit"
           class="bg-blue-500 text-white p-2 rounded-lg w-full"
+          :disabled="!isFormValid"
         >
           Register
         </button>
@@ -66,8 +67,25 @@ export default {
   components: {
     FooterComponent,
   },
+  computed: {
+    isFormValid() {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return (
+        this.registerData.username &&
+        this.registerData.password &&
+        this.registerData.confirmPassword &&
+        this.registerData.email &&
+        this.registerData.password === this.registerData.confirmPassword &&
+        emailPattern.test(this.registerData.email)
+      );
+    },
+  },
   methods: {
     async register() {
+      if (!this.isFormValid) {
+        alert('Please fill in all fields correctly.');
+        return;
+      }
       try {
         const response = await register(this.registerData);
         if (response.status === 201) {
